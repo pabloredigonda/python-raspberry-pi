@@ -1,0 +1,4 @@
+python-dotenv==0.19.0
+gpiozero==1.6.2
+pigpio==1.78
+adafruit-circuitpython-ads1x15==2.2.8
