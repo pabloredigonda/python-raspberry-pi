@@ -19,4 +19,7 @@ install :
 	pip3 install -r dependencies.txt
 
 sync:
-	sshpass -p 123qwe rsync -av --exclude '*.git' --exclude '.idea' . pi@hydrosys4-pi:/home/pi/python-pi
+	sshpass -p 123qwe rsync -av --exclude '*.git' --exclude '.idea' . pi@192.168.0.47:/home/pi/python-pi
+
+ssh:
+	sshpass -p 123qwe ssh pi@192.168.0.47

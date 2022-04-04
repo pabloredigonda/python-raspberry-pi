@@ -1,4 +1,5 @@
-from .dht11 import DHT11
+from src.sensor.dht11 import DHT11
+
 
 class DHT11Sensor:
     def __init__(self, pin):

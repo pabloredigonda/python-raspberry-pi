@@ -1,3 +1,8 @@
-from src import app
+import sys
 
-app.create_app();
+sys.path.append("/home/pi/python-pi")
+
+
+from src.create_app import create_app
+
+create_app()
