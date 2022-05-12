@@ -1,7 +1,8 @@
 from dotenv import load_dotenv
 import RPi.GPIO as GPIO
-GPIO.setmode(GPIO.BOARD)
+# GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
+GPIO.cleanup()
 load_dotenv()
 
 
@@ -10,9 +11,9 @@ from src.application import Application
 from src.di import DI
 
 
-def configure_gpio():
-    GPIO.setmode(GPIO.BOARD)
-    GPIO.setwarnings(False)
+# def configure_gpio():
+#     GPIO.setmode(GPIO.BOARD)
+#     GPIO.setwarnings(False)
 
 
 def create_app():
@@ -20,5 +21,5 @@ def create_app():
 
     environment = Environment()
     di = DI(environment)
-    application = Application(environment, di)
+    application = Application(environment=environment, di=di, gpio=GPIO)
     return application.run()

@@ -17,6 +17,7 @@ with open("cap_config.json") as json_data_file:
 # print(json.dumps(config_data))
 
 
+
 def percent_translation(raw_val):
     per_val = (
         abs(

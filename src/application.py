@@ -8,60 +8,46 @@ import sys
 
 
 class Application:
-    def __init__(self, environment: Environment, di: DI):
+    def __init__(self, environment: Environment, di: DI, gpio):
+        self.gpio = gpio
         self.startedAt = time.time()
         self.environment = environment
         self.program = Program()
-        self.led = di.led
-        self.dht11_sensor = di.dht11_sensor
-        # self.ds18B20Sensor = di.ds18B20Sensor()
-        # self.ads1015Sensor = di.ads1015Sensor()
+        self.humidity_handler = di.humidity_handler
 
         signal.signal(signal.SIGINT, self.quit)
 
-    def handle_temperature(self):
-        temperature = self.dht11_sensor.temperature()
-        print("Temperatura: %s grados" % temperature)
-
-        if temperature < self.program.min_temperature:
-            print("Temperatura muy baja, Encendiendo calefaccion")
-            self.led.on()
-        elif temperature > self.program.max_temperature:
-            print("Temperatura muy baja, Encendiendo ventilacion")
-            self.led.off()
-
-    def handle_humidity(self):
-        # humidity = self.ads1015Sensor.humidity()
-        humidity = self.dht11_sensor.humidity()
-        print("Humedad: %s" % humidity)
-
-        if humidity < self.program.min_humidity:
-            print(f"Humedad ({humidity} %)muy baja, empezando riego")
-            self.led.on()
-        elif humidity > self.program.max_humidity:
-            print("Humedad muy alta, ¿que hacemos?")
-
     def run(self):
-        while self.should_continue():
-            # self.handle_temperature()
-            self.handle_humidity()
-            time.sleep(self.program.seconds_to_sleep)
 
-        self.finish()
+        try:
+            time.sleep(10)
+            while self.should_continue():
+                self.humidity_handler.exec(self.program)
+                time.sleep(self.program.seconds_to_sleep)
+
+            self.finish()
+        except KeyboardInterrupt:
+            print("KeyboardInterrupt exception is caught")
+            self.quit()
+        except Exception:
+            print("Exception is caught")
+            self.quit()
+        else:
+            print("Program Finished")
 
     def elapsed(self) -> int:
-        elapsedSeconds = int(time.time() - self.startedAt)
-        print("elapsedSeconds %s" % elapsedSeconds)
-        return int(elapsedSeconds / 60)
+        elapsed_seconds = int(time.time() - self.startedAt)
+        print("elapsedSeconds %s" % elapsed_seconds)
+        return int(elapsed_seconds / 60)
 
     def should_continue(self) -> bool:
         print("running since %s" % self.elapsed())
         return self.program.duration_in_minutes >= self.elapsed()
 
     def finish(self):
-        # GPIO.cleanup()
+        self.gpio.cleanup()
         print("finish")
 
-    def quit(self, a, b):
+    def quit(self, event=None, zaraza=None):
         self.finish()
         sys.exit(0)
